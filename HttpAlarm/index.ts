@@ -1,23 +1,17 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import axios, { AxiosRequestConfig } from 'axios';
 
-const APP_ID = process.env["appId"];
-const APP_SECRET = process.env["appSecret"];
-const TENANT_ID = process.env["tenantId"];
-const TEAMS_WEBHOOK = process.env["teamsWebhook"]
-
-const TOKEN_ENDPOINT = 'https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/v2.0/token';
-const MS_GRAPH_SCOPE = 'https://graph.microsoft.com/.default';
+const TEAMS_WEBHOOK = process.env["TeamsWebHook"]
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
     context.log(req.body)
-    //await sendToTeams(req.body);
+    await sendToTeams();
 
 };
 export default httpTrigger;
 
-async function sendToTeams(body: any) {
+async function sendToTeams() {
     let config: AxiosRequestConfig = {
         method: 'post',
         url: TEAMS_WEBHOOK,
@@ -41,7 +35,7 @@ async function sendToTeams(body: any) {
                                         "items": [
                                             {
                                                 "type": "TextBlock",
-                                                "text": body.name,
+                                                "text": "ALARM",
                                                 "wrap": true,
                                                 "size": "Medium",
                                                 "weight": "Bolder"
@@ -54,7 +48,7 @@ async function sendToTeams(body: any) {
                                         "items": [
                                             {
                                                 "type": "TextBlock",
-                                                "text": body.email,
+                                                "text": "BLABLA",
                                                 "wrap": true,
                                                 "weight": "Lighter"
                                             }
