@@ -11,13 +11,22 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     let phone = req.body.value[0].resourceData.source.identity.phone
     context.log(phone)
 
-    let rows = []
+    let elements = []
+
+    rows.push({
+        "type": "TextBlock",
+        "size": "Medium",
+        "weight": "Bolder",
+        "text": "ALARM",
+        "horizontalAlignment": "Center"
+    });
+
     if (user) {
-        rows.push(getTableRow("User ID: ", user.id))
-        rows.push(getTableRow("Tenant ID: ", user.tenantId))
+        rows.push(getRow("User ID", user.id))
+        rows.push(getRow("Tenant ID", user.tenantId))
     }
     if (phone) {
-        rows.push(getTableRow("Number: ", phone))
+        rows.push(getRow("Number: ", phone))
     }
 
     context.log(rows)
@@ -27,7 +36,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 };
 export default httpTrigger;
 
-async function sendToTeams(rows: object[]) {
+async function sendToTeams(body: object[]) {
     let config: AxiosRequestConfig = {
         method: 'post',
         url: TEAMS_WEBHOOK,
@@ -41,78 +50,7 @@ async function sendToTeams(rows: object[]) {
                     "contentType": "application/vnd.microsoft.card.adaptive",
                     "content": {
                         "type": "AdaptiveCard",
-                        "body": [
-                            {
-                                "type": "TextBlock",
-                                "size": "Medium",
-                                "weight": "Bolder",
-                                "text": "ALARM",
-                                "horizontalAlignment": "Center"
-                            },
-                            {
-                                "type": "Table",
-                                "columns": [
-                                    {
-                                        "width": 1
-                                    },
-                                    {
-                                        "width": 3
-                                    }
-                                ],
-                                "rows": [
-                                    {
-                                        "type": "TableRow",
-                                        "cells": [
-                                            {
-                                                "type": "TableCell",
-                                                "items": [
-                                                    {
-                                                        "type": "TextBlock",
-                                                        "text": "Caller ID:",
-                                                        "wrap": true
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "type": "TableCell",
-                                                "items": [
-                                                    {
-                                                        "type": "TextBlock",
-                                                        "text": "New TextBlock",
-                                                        "wrap": true
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "type": "TableRow",
-                                        "cells": [
-                                            {
-                                                "type": "TableCell",
-                                                "items": [
-                                                    {
-                                                        "type": "TextBlock",
-                                                        "text": "Tenant ID:",
-                                                        "wrap": true
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "type": "TableCell",
-                                                "items": [
-                                                    {
-                                                        "type": "TextBlock",
-                                                        "text": "New TextBlock",
-                                                        "wrap": true
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ],
+                        "body": body,
                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                         "version": "1.5"
                     }
@@ -123,30 +61,10 @@ async function sendToTeams(rows: object[]) {
     await axios(config);
 }
 
-function getTableRow(key: string, value: string): object {
+function getRow(key: string, value: string): object {
     return {
-        "type": "TableRow",
-        "cells": [
-            {
-                "type": "TableCell",
-                "items": [
-                    {
-                        "type": "TextBlock",
-                        "text": key,
-                        "wrap": true
-                    }
-                ]
-            },
-            {
-                "type": "TableCell",
-                "items": [
-                    {
-                        "type": "TextBlock",
-                        "text": value,
-                        "wrap": true
-                    }
-                ]
-            }
-        ]
+        "type": "TextBlock",
+        "text": key + " - " + value,
+        "wrap": true
     }
 }
