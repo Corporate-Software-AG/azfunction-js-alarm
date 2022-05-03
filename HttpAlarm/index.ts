@@ -5,24 +5,27 @@ const TEAMS_WEBHOOK = process.env["TeamsWebHook"]
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
-    context.log("----------------")
-    context.log(req.body)
-    context.log("----------------")
-    context.log(req.body.value[0].resourceData)
-    context.log("------User------")
-    context.log(req.body.value[0].resourceData.source.identity.user)
-    context.log("---cR-original--")
-    context.log(req.body.value[0].resourceData.callRoutes[0].original)
-    context.log("---cR-final-----")
-    context.log(req.body.value[0].resourceData.callRoutes[0].final)
+    context.log("------Caller------")
+    let user = req.body.value[0].resourceData.source.identity.user
+    context.log(user)
+    let phone = req.body.value[0].resourceData.source.identity.phone
+    context.log(phone)
 
-    await sendToTeams();
+    let rows = []
+    if (user) {
+        rows.push(getTableRow("User ID: ", user.id))
+        rows.push(getTableRow("Tenant ID: ", user.tenantId))
+    }
+    if (phone) {
+        rows.push(getTableRow("Number: ", phone))
+    }
+    await sendToTeams(rows);
     context.log("-----finish-----")
 
 };
 export default httpTrigger;
 
-async function sendToTeams() {
+async function sendToTeams(rows) {
     let config: AxiosRequestConfig = {
         method: 'post',
         url: TEAMS_WEBHOOK,
@@ -38,43 +41,27 @@ async function sendToTeams() {
                         "type": "AdaptiveCard",
                         "body": [
                             {
-                                "type": "ColumnSet",
-                                "columns": [
-                                    {
-                                        "type": "Column",
-                                        "width": "stretch",
-                                        "items": [
-                                            {
-                                                "type": "TextBlock",
-                                                "text": "ALARM",
-                                                "wrap": true,
-                                                "size": "Medium",
-                                                "weight": "Bolder"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "type": "Column",
-                                        "width": "stretch",
-                                        "items": [
-                                            {
-                                                "type": "TextBlock",
-                                                "text": "BLABLA",
-                                                "wrap": true,
-                                                "weight": "Lighter"
-                                            }
-                                        ]
-                                    }
-                                ]
+                                "type": "TextBlock",
+                                "size": "Medium",
+                                "weight": "Bolder",
+                                "text": "ALARM",
+                                "horizontalAlignment": "Center"
                             },
                             {
-                                "type": "TextBlock",
-                                "text": "ALARM SEND!!",
-                                "wrap": true
+                                "type": "Table",
+                                "columns": [
+                                    {
+                                        "width": 1
+                                    },
+                                    {
+                                        "width": 3
+                                    }
+                                ],
+                                "rows": rows
                             }
                         ],
                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                        "version": "1.3"
+                        "version": "1.5"
                     }
                 }
             ]
@@ -83,3 +70,30 @@ async function sendToTeams() {
     await axios(config);
 }
 
+function getTableRow(key, value) {
+    return {
+        "type": "TableRow",
+        "cells": [
+            {
+                "type": "TableCell",
+                "items": [
+                    {
+                        "type": "TextBlock",
+                        "text": key,
+                        "wrap": true
+                    }
+                ]
+            },
+            {
+                "type": "TableCell",
+                "items": [
+                    {
+                        "type": "TextBlock",
+                        "text": value,
+                        "wrap": true
+                    }
+                ]
+            }
+        ]
+    }
+}
