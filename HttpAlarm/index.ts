@@ -48,6 +48,69 @@ async function sendToTeams(rows: object[]) {
                                 "weight": "Bolder",
                                 "text": "ALARM",
                                 "horizontalAlignment": "Center"
+                            },
+                            {
+                                "type": "Table",
+                                "columns": [
+                                    {
+                                        "width": 1
+                                    },
+                                    {
+                                        "width": 3
+                                    }
+                                ],
+                                "rows": [
+                                    {
+                                        "type": "TableRow",
+                                        "cells": [
+                                            {
+                                                "type": "TableCell",
+                                                "items": [
+                                                    {
+                                                        "type": "TextBlock",
+                                                        "text": "Caller ID:",
+                                                        "wrap": true
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "TableCell",
+                                                "items": [
+                                                    {
+                                                        "type": "TextBlock",
+                                                        "text": "New TextBlock",
+                                                        "wrap": true
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "TableRow",
+                                        "cells": [
+                                            {
+                                                "type": "TableCell",
+                                                "items": [
+                                                    {
+                                                        "type": "TextBlock",
+                                                        "text": "Tenant ID:",
+                                                        "wrap": true
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "TableCell",
+                                                "items": [
+                                                    {
+                                                        "type": "TextBlock",
+                                                        "text": "New TextBlock",
+                                                        "wrap": true
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ],
                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
