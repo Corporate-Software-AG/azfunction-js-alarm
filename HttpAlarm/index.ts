@@ -13,7 +13,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     let elements = []
 
-    rows.push({
+    elements.push({
         "type": "TextBlock",
         "size": "Medium",
         "weight": "Bolder",
@@ -22,15 +22,15 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     });
 
     if (user) {
-        rows.push(getRow("User ID", user.id))
-        rows.push(getRow("Tenant ID", user.tenantId))
+        elements.push(getRow("User ID", user.id))
+        elements.push(getRow("Tenant ID", user.tenantId))
     }
     if (phone) {
-        rows.push(getRow("Number: ", phone))
+        elements.push(getRow("Number: ", phone))
     }
 
-    context.log(rows)
-    await sendToTeams(rows);
+    context.log(elements)
+    await sendToTeams(elements);
     context.log("-----finish-----")
 
 };
