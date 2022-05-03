@@ -5,8 +5,13 @@ const TEAMS_WEBHOOK = process.env["TeamsWebHook"]
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
+    context.log("----------------")
     context.log(req.body)
+    context.log("----------------")
+    context.log(req.body.value[0].resourceData)
+    context.log("----------------")
     await sendToTeams();
+    context.log("-----finish-----")
 
 };
 export default httpTrigger;
