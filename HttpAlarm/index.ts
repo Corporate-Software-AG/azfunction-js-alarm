@@ -9,7 +9,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log(req.body)
     context.log("----------------")
     context.log(req.body.value[0].resourceData)
-    context.log("----------------")
+    context.log("------User------")
+    context.log(req.body.value[0].resourceData.source.identity.user)
+    context.log("---cR-original--")
+    context.log(req.body.value[0].resourceData.callRoutes[0].original)
+    context.log("---cR-final-----")
+    context.log(req.body.value[0].resourceData.callRoutes[0].final)
+
     await sendToTeams();
     context.log("-----finish-----")
 
