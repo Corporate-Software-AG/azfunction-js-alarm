@@ -19,13 +19,15 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     if (phone) {
         rows.push(getTableRow("Number: ", phone))
     }
+
+    context.log(rows)
     await sendToTeams(rows);
     context.log("-----finish-----")
 
 };
 export default httpTrigger;
 
-async function sendToTeams(rows) {
+async function sendToTeams(rows: object[]) {
     let config: AxiosRequestConfig = {
         method: 'post',
         url: TEAMS_WEBHOOK,
@@ -61,7 +63,7 @@ async function sendToTeams(rows) {
                             }
                         ],
                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                        "version": "1.5"
+                        "version": "1.3"
                     }
                 }
             ]
@@ -70,7 +72,7 @@ async function sendToTeams(rows) {
     await axios(config);
 }
 
-function getTableRow(key, value) {
+function getTableRow(key: string, value: string): object {
     return {
         "type": "TableRow",
         "cells": [
