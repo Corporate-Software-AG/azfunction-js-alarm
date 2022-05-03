@@ -48,22 +48,10 @@ async function sendToTeams(rows: object[]) {
                                 "weight": "Bolder",
                                 "text": "ALARM",
                                 "horizontalAlignment": "Center"
-                            },
-                            {
-                                "type": "Table",
-                                "columns": [
-                                    {
-                                        "width": 1
-                                    },
-                                    {
-                                        "width": 3
-                                    }
-                                ],
-                                "rows": rows
                             }
                         ],
                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                        "version": "1.3"
+                        "version": "1.5"
                     }
                 }
             ]
