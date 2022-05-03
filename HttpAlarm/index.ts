@@ -5,32 +5,33 @@ const TEAMS_WEBHOOK = process.env["TeamsWebHook"]
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
-    context.log("------Caller------")
+
     let user = req.body.value[0].resourceData.source.identity.user
-    context.log(user)
     let phone = req.body.value[0].resourceData.source.identity.phone
-    context.log(phone)
 
     let elements = []
 
     elements.push({
         "type": "TextBlock",
-        "size": "Medium",
+        "size": "ExtraLarge",
         "weight": "Bolder",
-        "text": "ALARM",
+        "text": "!!! ALARM !!!",
+        "color": "Attention",
         "horizontalAlignment": "Center"
     });
 
     if (user) {
+        context.log(user)
         elements.push(getRow("User ID", user.id))
         elements.push(getRow("Tenant ID", user.tenantId))
     }
     if (phone) {
-        elements.push(getRow("Number: ", phone))
+        context.log(phone)
+        elements.push(getRow("Number", phone.id))
     }
 
-    context.log(elements)
     await sendToTeams(elements);
+
     context.log("-----finish-----")
 
 };
@@ -63,8 +64,30 @@ async function sendToTeams(body: object[]) {
 
 function getRow(key: string, value: string): object {
     return {
-        "type": "TextBlock",
-        "text": key + " - " + value,
-        "wrap": true
+        "type": "ColumnSet",
+        "columns": [
+            {
+                "type": "Column",
+                "width": 30,
+                "items": [
+                    {
+                        "type": "TextBlock",
+                        "text": key,
+                        "wrap": true
+                    }
+                ]
+            },
+            {
+                "type": "Column",
+                "width": 70,
+                "items": [
+                    {
+                        "type": "TextBlock",
+                        "text": value,
+                        "wrap": true
+                    }
+                ]
+            }
+        ]
     }
 }
