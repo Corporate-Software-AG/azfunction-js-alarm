@@ -37,7 +37,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     const methodParams = {
         methodName: 'onAlarm',
-        payload: "!!ALARM!! from " + user,
+        payload: "!!ALARM!!",
         responseTimeoutInSeconds: 15 // set response timeout as 15 seconds
     };
 
