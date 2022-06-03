@@ -2,6 +2,9 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import axios, { AxiosRequestConfig } from 'axios';
 
 const TEAMS_WEBHOOK = process.env["TeamsWebHook"]
+const IOTHUB_CONNECTION_STRING = process.env.IOTHUB_CONNECTION_STRING
+const IOT_NAME = "DemoPi"
+
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
@@ -30,7 +33,25 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         elements.push(getRow("Number", phone.id))
     }
 
-    await sendToTeams(elements);
+    //await sendToTeams(elements);
+
+    const methodParams = {
+        methodName: 'onAlarm',
+        payload: "!!ALARM!! from " + user,
+        responseTimeoutInSeconds: 15 // set response timeout as 15 seconds
+    };
+
+    const IotClient = require("azure-iothub").Client;
+    let iotClient = IotClient.fromConnectionString(IOTHUB_CONNECTION_STRING);
+
+    iotClient.invokeDeviceMethod(IOT_NAME, methodParams, (err, result) => {
+        if (err) {
+            console.error('Failed to invoke method \'' + methodParams.methodName + '\': ' + err.message);
+        } else {
+            console.log(methodParams.methodName + ' on ' + IOT_NAME + ':');
+            console.log(JSON.stringify(result, null, 2));
+        }
+    });
 
     context.log("-----finish-----")
 
