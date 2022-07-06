@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "axios": "^0.21.4",
-    "azure-iothub": "^1.15.0"
+    "azure-iothub": "^1.15.0",
+    "botbuilder": "^4.16.0"
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",

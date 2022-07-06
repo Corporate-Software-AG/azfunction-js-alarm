@@ -1,14 +1,18 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import { AzureFunction, Context } from "@azure/functions"
 
 const IOT_DEVICE_CONNECTION_STRING = process.env.IOT_DEVICE_CONNECTION_STRING
 const IOT_DEVICE_NAME = process.env.IOT_DEVICE_NAME
+const IS_CONNECTED = process.env.IS_CONNECTED
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    context.log('HTTP trigger function processed a request.');
+const timerTrigger: AzureFunction = async function (context: Context, myTimer: any): Promise<void> {
+    var timeStamp = new Date().toISOString();
+    if (myTimer.isPastDue) {
+        context.log('Timer function is running late!');
+    }
 
     const methodParams = {
-        methodName: 'onAlarm',
-        payload: "!!ALARM!!",
+        methodName: 'onHealthCheck',
+        payload: "healthcheck",
         responseTimeoutInSeconds: 15 // set response timeout as 15 seconds
     };
 
@@ -18,14 +22,16 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     iotClient.invokeDeviceMethod(IOT_DEVICE_NAME, methodParams, (err, result) => {
         if (err) {
             console.error('Failed to invoke method \'' + methodParams.methodName + '\': ' + err.message);
+            if (IS_CONNECTED === "true") {
+                console.error('REACT');
+            }
         } else {
             console.log(methodParams.methodName + ' on ' + IOT_DEVICE_NAME + ':');
             console.log(JSON.stringify(result, null, 2));
         }
     });
 
-    context.log("-----finish-----")
-    return null;
-
+    context.log('Timer trigger function ran!', timeStamp);
 };
-export default httpTrigger;
+
+export default timerTrigger;
