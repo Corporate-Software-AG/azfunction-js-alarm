@@ -6,6 +6,10 @@ const IOT_DEVICE_NAME = process.env.IOT_DEVICE_NAME
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
 
+    const appInsights = require('applicationinsights')
+    appInsights.setup();
+    const appInsightsClient = appInsights.defaultClient;
+
     const methodParams = {
         methodName: 'onAlarm',
         payload: "!!ALARM!!",
@@ -21,6 +25,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         } else {
             console.log(methodParams.methodName + ' on ' + IOT_DEVICE_NAME + ':');
             console.log(JSON.stringify(result, null, 2));
+            appInsightsClient.trackEvent({ name: "ALARM to " + IOT_DEVICE_NAME })
         }
     });
 

@@ -10,6 +10,10 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
         context.log('Timer function is running late!');
     }
 
+    const appInsights = require('applicationinsights')
+    appInsights.setup();
+    const appInsightsClient = appInsights.defaultClient;
+
     const methodParams = {
         methodName: 'onHealthCheck',
         payload: "healthcheck",
@@ -23,11 +27,14 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
         if (err) {
             console.error('Failed to invoke method \'' + methodParams.methodName + '\': ' + err.message);
             if (IS_CONNECTED === "true") {
-                console.error('REACT');
+                appInsightsClient.trackEvent({ name: "CONNECTION LOST to " + IOT_DEVICE_NAME })
+            } else {
+                appInsightsClient.trackEvent({ name: "Disabled: " + IOT_DEVICE_NAME })
             }
         } else {
             console.log(methodParams.methodName + ' on ' + IOT_DEVICE_NAME + ':');
             console.log(JSON.stringify(result, null, 2));
+            appInsightsClient.trackEvent({ name: 'successful connection to ' + IOT_DEVICE_NAME })
         }
     });
 
