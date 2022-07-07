@@ -1,4 +1,3 @@
-const appInsights = require('applicationinsights');
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 
 const IOT_DEVICE_CONNECTION_STRING = process.env.IOT_DEVICE_CONNECTION_STRING
@@ -7,7 +6,8 @@ const IOT_DEVICE_NAME = process.env.IOT_DEVICE_NAME
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
 
-    appInsights.setup().start();
+    const appInsights = require('applicationinsights')
+    appInsights.setup();
     const appInsightsClient = appInsights.defaultClient;
 
     const methodParams = {
