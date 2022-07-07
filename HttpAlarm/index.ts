@@ -7,7 +7,7 @@ const IOT_DEVICE_NAME = process.env.IOT_DEVICE_NAME
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
 
-    appInsights.setup();
+    appInsights.setup().start();
     const appInsightsClient = appInsights.defaultClient;
 
     const methodParams = {
