@@ -10,6 +10,7 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "applicationinsights": "^2.3.3",
     "axios": "^0.21.4",
     "azure-iothub": "^1.15.0",
     "botbuilder": "^4.16.0"
